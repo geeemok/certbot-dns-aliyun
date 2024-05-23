@@ -1,18 +1,30 @@
-name: Docker Image CI
+name: Docker Build and Push
 
 on:
+  # 触发动作，例如推送标签时
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    tags:
+      - 'v*'
 
 jobs:
-
-  build:
-
+  build-and-push-image:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag certbot-dns-aly:$(date +%s)
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.geemok }}
+        password: ${{ secrets.lsy940406 }}
+
+    - name: Build and push Docker image
+      id: build-and-push
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: |
+          <geemok>/<certbot-dns-aly>:latest
+          <geemok>/<certbot-dns-aly>:${{ github.event.release.tag_name }}
