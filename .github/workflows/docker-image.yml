@@ -3,8 +3,9 @@ name: Docker Build and Push
 on:
   # 触发动作，例如推送标签时
   push:
-    tags:
-      - 'v*'
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build-and-push-image:
